@@ -3,17 +3,18 @@ set -e
 
 echo "==> SmartSuggest QR — Démarrage..."
 
-# Générer la clé si absente
+# En production Docker, APP_KEY vient de la variable d'environnement Render
+# Pas besoin de .env — Laravel lit directement les variables d'env
 if [ -z "$APP_KEY" ]; then
-    echo "==> Génération de la clé..."
-    php artisan key:generate --force
+    echo "ERREUR : APP_KEY non défini. Ajoutez-le dans les variables d'environnement Render."
+    exit 1
 fi
 
 # Migrations
 echo "==> Migrations..."
 php artisan migrate --force --no-interaction
 
-# Seed uniquement si la table roles est vide (première installation)
+# Seed uniquement au premier démarrage (table roles vide)
 ROLES_COUNT=$(php artisan tinker --execute="echo \DB::table('roles')->count();" 2>/dev/null | tail -1)
 if [ "$ROLES_COUNT" = "0" ] || [ -z "$ROLES_COUNT" ]; then
     echo "==> Premier démarrage — Seed initial..."
