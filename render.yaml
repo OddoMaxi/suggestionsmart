@@ -1,0 +1,70 @@
+services:
+  - type: web
+    name: smartsuggest-qr
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /up
+    autoDeploy: true
+
+    envVars:
+      - key: APP_NAME
+        value: "SmartSuggest QR"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false   # À renseigner après le premier déploiement
+
+      # Base de données (liée au service PostgreSQL ci-dessous)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: smartsuggest-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: smartsuggest-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: smartsuggest-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: smartsuggest-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: smartsuggest-db
+          property: password
+
+      # Session, cache, queue sur la BDD (pas de Redis requis)
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+
+      # Mail (configurer selon votre fournisseur)
+      - key: MAIL_MAILER
+        value: log   # Changer en smtp en production
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@smartsuggest.app
+      - key: MAIL_FROM_NAME
+        value: "SmartSuggest QR"
+
+      # Timezone Guinée
+      - key: APP_TIMEZONE
+        value: Africa/Conakry
+      - key: APP_LOCALE
+        value: fr
+
+databases:
+  - name: smartsuggest-db
+    databaseName: smartsuggest
+    plan: free   # Passer à "starter" en production (5 USD/mois)
