@@ -55,10 +55,10 @@ class SuggestionsExport implements FromQuery, WithHeadings, WithMapping, ShouldA
     {
         return [
             $suggestion->reference,
-            $suggestion->nom,
-            $suggestion->prenom,
-            $suggestion->telephone,
-            $suggestion->email ?? '',
+            $suggestion->anonyme ? 'Anonyme' : $suggestion->nom,
+            $suggestion->anonyme ? 'Anonyme' : $suggestion->prenom,
+            $suggestion->anonyme ? '' : ($suggestion->telephone ?? ''),
+            $suggestion->anonyme ? '' : ($suggestion->email ?? ''),
             $suggestion->agence?->nom ?? '',
             $suggestion->service?->nom ?? '',
             ucfirst($suggestion->type),

@@ -49,17 +49,16 @@ class GraphiqueRepartitionType extends ChartWidget
         $data = [
             $this->count('suggestion'),
             $this->count('critique'),
-            $this->count('reclamation'),
             $this->count('felicitation'),
         ];
 
         return [
             'datasets' => [[
                 'data'            => $data,
-                'backgroundColor' => ['#3b82f6', '#f59e0b', '#ef4444', '#22c55e'],
+                'backgroundColor' => ['#3b82f6', '#f59e0b', '#22c55e'],
                 'borderWidth'     => 0,
             ]],
-            'labels' => ['Suggestions', 'Critiques', 'Réclamations', 'Félicitations'],
+            'labels' => ['Suggestions', 'Critiques', 'Félicitations'],
         ];
     }
 

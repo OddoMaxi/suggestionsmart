@@ -15,13 +15,14 @@ return new class extends Migration
             $table->foreignUuid('agence_id')->nullable()->constrained('agences')->nullOnDelete();
 
             // Auteur
-            $table->string('nom');
-            $table->string('prenom');
-            $table->string('telephone', 30);
+            $table->boolean('anonyme')->default(false);
+            $table->string('nom')->nullable();
+            $table->string('prenom')->nullable();
+            $table->string('telephone', 30)->nullable();
             $table->string('email')->nullable();
 
             // Contenu
-            $table->enum('type', ['suggestion', 'critique', 'reclamation', 'felicitation'])->default('suggestion');
+            $table->enum('type', ['suggestion', 'critique', 'felicitation'])->default('suggestion');
             $table->text('message');
             $table->tinyInteger('satisfaction')->nullable()->comment('Note 1-5');
 

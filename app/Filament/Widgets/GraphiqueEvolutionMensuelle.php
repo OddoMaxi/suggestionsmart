@@ -42,7 +42,6 @@ class GraphiqueEvolutionMensuelle extends ChartWidget
             DB::raw('COUNT(*) as total'),
             DB::raw("SUM(CASE WHEN type='suggestion'   THEN 1 ELSE 0 END) as suggestions"),
             DB::raw("SUM(CASE WHEN type='critique'     THEN 1 ELSE 0 END) as critiques"),
-            DB::raw("SUM(CASE WHEN type='reclamation'  THEN 1 ELSE 0 END) as reclamations"),
             DB::raw("SUM(CASE WHEN type='felicitation' THEN 1 ELSE 0 END) as felicitations"),
         )
             ->when($this->agenceId,  fn($q) => $q->where('agence_id',  $this->agenceId))
@@ -59,7 +58,7 @@ class GraphiqueEvolutionMensuelle extends ChartWidget
             'datasets' => [
                 ['label' => 'Total',        'data' => $donnees->pluck('total')->toArray(),        'borderColor' => '#6366f1', 'backgroundColor' => 'rgba(99,102,241,0.1)', 'fill' => true],
                 ['label' => 'Suggestions',  'data' => $donnees->pluck('suggestions')->toArray(),  'borderColor' => '#3b82f6'],
-                ['label' => 'Réclamations', 'data' => $donnees->pluck('reclamations')->toArray(), 'borderColor' => '#ef4444'],
+                ['label' => 'Critiques',    'data' => $donnees->pluck('critiques')->toArray(),    'borderColor' => '#f59e0b'],
                 ['label' => 'Félicitations','data' => $donnees->pluck('felicitations')->toArray(),'borderColor' => '#22c55e'],
             ],
             'labels' => $labels,

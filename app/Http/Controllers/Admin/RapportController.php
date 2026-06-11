@@ -42,7 +42,6 @@ class RapportController extends Controller
             'total'          => $suggestions->count(),
             'suggestions'    => $suggestions->where('type', 'suggestion')->count(),
             'critiques'      => $suggestions->where('type', 'critique')->count(),
-            'reclamations'   => $suggestions->where('type', 'reclamation')->count(),
             'felicitations'  => $suggestions->where('type', 'felicitation')->count(),
             'haute_priorite' => $suggestions->where('priorite', 'haute')->count(),
             'traites'        => $suggestions->whereIn('statut', ['traite', 'cloture'])->count(),

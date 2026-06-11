@@ -13,13 +13,16 @@ class StoreSuggestionRequest extends FormRequest
 
     public function rules(): array
     {
+        $anonyme = filter_var($this->anonyme, FILTER_VALIDATE_BOOLEAN);
+
         return [
-            'nom'         => ['required', 'string', 'max:100'],
-            'prenom'      => ['required', 'string', 'max:100'],
-            'telephone'   => ['required', 'string', 'max:30', 'regex:/^[0-9\+\s\-\(\)]{6,30}$/'],
+            'anonyme'     => ['nullable', 'boolean'],
+            'nom'         => $anonyme ? ['nullable', 'string', 'max:100'] : ['required', 'string', 'max:100'],
+            'prenom'      => $anonyme ? ['nullable', 'string', 'max:100'] : ['required', 'string', 'max:100'],
+            'telephone'   => $anonyme ? ['nullable', 'string', 'max:30'] : ['required', 'string', 'max:30', 'regex:/^[0-9\+\s\-\(\)]{6,30}$/'],
             'email'       => ['nullable', 'email', 'max:150'],
             'service_id'  => ['required', 'uuid', 'exists:services,id'],
-            'type'        => ['required', 'in:suggestion,critique,reclamation,felicitation'],
+            'type'        => ['required', 'in:suggestion,critique,felicitation'],
             'message'     => ['required', 'string', 'min:10', 'max:3000'],
             'satisfaction'=> ['nullable', 'integer', 'min:1', 'max:5'],
         ];
@@ -47,9 +50,12 @@ class StoreSuggestionRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $anonyme = filter_var($this->anonyme, FILTER_VALIDATE_BOOLEAN);
+
         $this->merge([
-            'nom'     => strip_tags(trim($this->nom ?? '')),
-            'prenom'  => strip_tags(trim($this->prenom ?? '')),
+            'anonyme' => $anonyme,
+            'nom'     => $anonyme ? null : strip_tags(trim($this->nom ?? '')),
+            'prenom'  => $anonyme ? null : strip_tags(trim($this->prenom ?? '')),
             'message' => strip_tags(trim($this->message ?? '')),
         ]);
     }

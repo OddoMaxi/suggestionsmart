@@ -3,7 +3,7 @@ FROM php:8.3-fpm-alpine
 # Dépendances système
 RUN apk add --no-cache \
     nginx \
-    postgresql-dev \
+    mysql-client \
     libzip-dev \
     zip unzip git curl \
     icu-dev oniguruma-dev \
@@ -13,7 +13,7 @@ RUN apk add --no-cache \
 # Extensions PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install \
-        pdo_pgsql pgsql \
+        pdo_mysql mysqli \
         zip intl mbstring \
         opcache pcntl bcmath \
         gd

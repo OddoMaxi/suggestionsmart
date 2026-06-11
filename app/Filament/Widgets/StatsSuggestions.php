@@ -45,7 +45,6 @@ class StatsSuggestions extends BaseWidget
         $total         = (clone $base)->count();
         $suggestions   = (clone $base)->where('type', 'suggestion')->count();
         $critiques     = (clone $base)->where('type', 'critique')->count();
-        $reclamations  = (clone $base)->where('type', 'reclamation')->count();
         $felicitations = (clone $base)->where('type', 'felicitation')->count();
         $hautesPrio    = (clone $base)->where('priorite', 'haute')->whereIn('statut', ['nouveau', 'en_cours'])->count();
         $nouveaux      = (clone $base)->where('statut', 'nouveau')->count();
@@ -76,10 +75,6 @@ class StatsSuggestions extends BaseWidget
             Stat::make('Critiques', $critiques)
                 ->icon('heroicon-o-exclamation-triangle')
                 ->color('warning'),
-
-            Stat::make('Réclamations', $reclamations)
-                ->icon('heroicon-o-x-circle')
-                ->color('danger'),
 
             Stat::make('Félicitations', $felicitations)
                 ->icon('heroicon-o-star')

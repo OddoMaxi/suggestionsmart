@@ -53,10 +53,6 @@
         <div class="lab">Critiques</div>
     </div>
     <div class="stat-box">
-        <div class="val" style="color:#ef4444">{{ $stats['reclamations'] }}</div>
-        <div class="lab">Réclamations</div>
-    </div>
-    <div class="stat-box">
         <div class="val" style="color:#22c55e">{{ $stats['felicitations'] }}</div>
         <div class="lab">Félicitations</div>
     </div>
@@ -98,11 +94,11 @@
             <td>{{ $s->agence?->nom ?? '—' }}</td>
             <td>{{ $s->service?->nom }}</td>
             <td>
-                <span class="badge badge-{{ ['suggestion'=>'info','critique'=>'warn','reclamation'=>'danger','felicitation'=>'success'][$s->type] ?? 'gray' }}">
+                <span class="badge badge-{{ ['suggestion'=>'info','critique'=>'warn','felicitation'=>'success'][$s->type] ?? 'gray' }}">
                     {{ ucfirst($s->type) }}
                 </span>
             </td>
-            <td>{{ $s->prenom }} {{ $s->nom }}</td>
+            <td>{{ $s->nom_affichage }}</td>
             <td>{{ ucfirst($s->statut) }}</td>
             <td class="{{ $s->priorite === 'haute' ? 'haute' : '' }}">{{ ucfirst($s->priorite) }}</td>
             <td>{{ $s->satisfaction ? str_repeat('★', $s->satisfaction) : '—' }}</td>

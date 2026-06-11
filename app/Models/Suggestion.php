@@ -17,13 +17,14 @@ class Suggestion extends Model
 
     protected $fillable = [
         'reference', 'service_id', 'agence_id',
-        'nom', 'prenom', 'telephone', 'email',
+        'anonyme', 'nom', 'prenom', 'telephone', 'email',
         'type', 'message', 'satisfaction',
         'statut', 'priorite', 'assigne_a',
         'commentaire_interne', 'ip_address', 'user_agent', 'canal',
     ];
 
     protected $casts = [
+        'anonyme'     => 'boolean',
         'satisfaction' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -90,10 +91,14 @@ class Suggestion extends Model
         return match ($this->type) {
             'suggestion'   => ['color' => 'info', 'label' => 'Suggestion', 'icon' => 'heroicon-o-light-bulb'],
             'critique'     => ['color' => 'warning', 'label' => 'Critique', 'icon' => 'heroicon-o-exclamation-triangle'],
-            'reclamation'  => ['color' => 'danger', 'label' => 'Réclamation', 'icon' => 'heroicon-o-x-circle'],
             'felicitation' => ['color' => 'success', 'label' => 'Félicitation', 'icon' => 'heroicon-o-star'],
             default        => ['color' => 'gray', 'label' => $this->type, 'icon' => 'heroicon-o-chat-bubble-left'],
         };
+    }
+
+    public function getNomAffichageAttribute(): string
+    {
+        return $this->anonyme ? 'Anonyme' : trim("{$this->prenom} {$this->nom}");
     }
 
     public function scopeNouveau($query) { return $query->where('statut', 'nouveau'); }

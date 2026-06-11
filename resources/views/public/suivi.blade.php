@@ -61,7 +61,6 @@
                 $typeConfig = match($suggestion->type) {
                     'suggestion'   => ['emoji' => '💡', 'label' => 'Suggestion'],
                     'critique'     => ['emoji' => '⚠️', 'label' => 'Critique'],
-                    'reclamation'  => ['emoji' => '🚨', 'label' => 'Réclamation'],
                     'felicitation' => ['emoji' => '🌟', 'label' => 'Félicitation'],
                     default        => ['emoji' => '📝', 'label' => ucfirst($suggestion->type)],
                 };

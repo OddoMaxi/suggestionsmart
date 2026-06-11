@@ -3,10 +3,8 @@ set -e
 
 echo "==> SmartSuggest QR — Démarrage..."
 
-# En production Docker, APP_KEY vient de la variable d'environnement Render
-# Pas besoin de .env — Laravel lit directement les variables d'env
 if [ -z "$APP_KEY" ]; then
-    echo "ERREUR : APP_KEY non défini. Ajoutez-le dans les variables d'environnement Render."
+    echo "ERREUR : APP_KEY non défini. Ajoutez-le dans le fichier .env ou les variables d'environnement."
     exit 1
 fi
 

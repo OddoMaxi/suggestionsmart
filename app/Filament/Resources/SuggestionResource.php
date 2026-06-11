@@ -64,7 +64,7 @@ class SuggestionResource extends Resource
             Forms\Components\Section::make('Contenu')->schema([
                 Forms\Components\Placeholder::make('auteur')
                     ->label('Auteur')
-                    ->content(fn ($record) => $record ? "{$record->prenom} {$record->nom} — {$record->telephone}" : ''),
+                    ->content(fn ($record) => $record ? ($record->anonyme ? '🕵️ Anonyme' : "{$record->prenom} {$record->nom} — {$record->telephone}") : ''),
 
                 Forms\Components\Placeholder::make('service_nom')
                     ->label('Service')
@@ -117,17 +117,16 @@ class SuggestionResource extends Resource
                     ->colors([
                         'info'    => 'suggestion',
                         'warning' => 'critique',
-                        'danger'  => 'reclamation',
                         'success' => 'felicitation',
                     ])
                     ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->grow(false),
 
-                // Auteur — prénom + nom sur deux lignes
+                // Auteur — prénom + nom sur deux lignes (ou Anonyme)
                 Tables\Columns\TextColumn::make('prenom')
                     ->label('Auteur')
-                    ->formatStateUsing(fn ($state, $record) => $state . ' ' . $record->nom)
-                    ->description(fn ($record) => $record->telephone)
+                    ->formatStateUsing(fn ($state, $record) => $record->anonyme ? '🕵️ Anonyme' : ($state . ' ' . $record->nom))
+                    ->description(fn ($record) => $record->anonyme ? null : $record->telephone)
                     ->searchable()
                     ->wrap(),
 
@@ -195,7 +194,6 @@ class SuggestionResource extends Resource
                     ->options([
                         'suggestion'   => 'Suggestion',
                         'critique'     => 'Critique',
-                        'reclamation'  => 'Réclamation',
                         'felicitation' => 'Félicitation',
                     ]),
 

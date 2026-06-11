@@ -93,6 +93,7 @@
 @csrf
 <input type="hidden" name="service_id"   id="f_service_id">
 <input type="hidden" name="type"         id="f_type">
+<input type="hidden" name="anonyme"      id="f_anonyme" value="0">
 <input type="hidden" name="nom"          id="f_nom">
 <input type="hidden" name="prenom"       id="f_prenom">
 <input type="hidden" name="telephone"    id="f_telephone">
@@ -115,7 +116,6 @@
                 ['suggestion',   '💡', 'Suggestion',   'Partagez une idée', 'from-blue-400 to-blue-600',   'bg-blue-50 border-blue-200'],
                 ['felicitation', '🌟', 'Félicitation',  'Exprimez votre satisfaction', 'from-green-400 to-emerald-600', 'bg-green-50 border-green-200'],
                 ['critique',     '⚠️', 'Critique',      'Signalez un problème', 'from-amber-400 to-orange-500', 'bg-amber-50 border-amber-200'],
-                ['reclamation',  '🚨', 'Réclamation',   'Demandez une action', 'from-red-400 to-rose-600',   'bg-red-50 border-red-200'],
             ] as [$val, $emoji, $label, $desc, $grad, $bg])
             <div class="type-card border-2 {{ $bg }} rounded-2xl p-4 text-center"
                  data-type="{{ $val }}"
@@ -184,7 +184,30 @@
             <p class="text-gray-500 text-sm mt-1">Vos coordonnées restent confidentielles</p>
         </div>
 
-        <div class="space-y-4">
+        {{-- Toggle anonyme --}}
+        <div class="mb-5 bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
+            <label class="flex items-center gap-3 cursor-pointer select-none">
+                <div class="relative">
+                    <input type="checkbox" id="chk_anonyme" class="sr-only" onchange="toggleAnonyme(this.checked)">
+                    <div id="toggle_track" class="w-12 h-6 rounded-full bg-gray-300 transition-colors duration-200"></div>
+                    <div id="toggle_thumb" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200"></div>
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-800 text-sm">Rester anonyme</p>
+                    <p class="text-xs text-gray-500">Votre identité ne sera pas communiquée</p>
+                </div>
+            </label>
+        </div>
+
+        {{-- Bandeau anonyme (visible quand anonyme activé) --}}
+        <div id="anonyme_banner" class="hidden mb-4 bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
+            <div class="text-2xl mb-1">🕵️</div>
+            <p class="font-semibold text-green-800 text-sm">Vous soumettez de façon anonyme</p>
+            <p class="text-xs text-green-600 mt-0.5">Aucune information personnelle ne sera enregistrée</p>
+        </div>
+
+        {{-- Champs identité (masqués si anonyme) --}}
+        <div id="identity_fields" class="space-y-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1.5">Prénom <span class="text-indigo-500">*</span></label>
                 <input id="inp_prenom" type="text" inputmode="text" autocomplete="given-name"
@@ -308,8 +331,8 @@ const typeLabels = {
     suggestion: '💡 Suggestion',
     felicitation: '🌟 Félicitation',
     critique: '⚠️ Critique',
-    reclamation: '🚨 Réclamation',
 };
+let isAnonyme = false;
 const starLabels = ['', 'Très insatisfait 😞', 'Insatisfait 😕', 'Neutre 😐', 'Satisfait 😊', 'Très satisfait 😍'];
 
 // ─── Navigation ─────────────────────────────────────────────────
@@ -382,8 +405,34 @@ function filterServices(val) {
     document.getElementById('noService').classList.toggle('hidden', visible > 0);
 }
 
+// ─── Étape 3 : toggle anonyme ────────────────────────────────────
+function toggleAnonyme(checked) {
+    isAnonyme = checked;
+    const track  = document.getElementById('toggle_track');
+    const thumb  = document.getElementById('toggle_thumb');
+    const fields = document.getElementById('identity_fields');
+    const banner = document.getElementById('anonyme_banner');
+
+    if (checked) {
+        track.style.backgroundColor = '#6366f1';
+        thumb.style.transform = 'translateX(24px)';
+        fields.style.display = 'none';
+        banner.classList.remove('hidden');
+    } else {
+        track.style.backgroundColor = '';
+        thumb.style.transform = '';
+        fields.style.display = '';
+        banner.classList.add('hidden');
+    }
+    validateStep3();
+}
+
 // ─── Étape 3 : identité ─────────────────────────────────────────
 function validateStep3() {
+    if (isAnonyme) {
+        document.getElementById('step3Btn').disabled = false;
+        return;
+    }
     const prenom = document.getElementById('inp_prenom').value.trim();
     const nom    = document.getElementById('inp_nom').value.trim();
     const tel    = document.getElementById('inp_tel').value.trim();
@@ -392,19 +441,24 @@ function validateStep3() {
 }
 
 function goToStep4() {
-    const prenom = document.getElementById('inp_prenom').value.trim();
-    const nom    = document.getElementById('inp_nom').value.trim();
-    const tel    = document.getElementById('inp_tel').value.trim();
+    if (!isAnonyme) {
+        const prenom = document.getElementById('inp_prenom').value.trim();
+        const nom    = document.getElementById('inp_nom').value.trim();
+        const tel    = document.getElementById('inp_tel').value.trim();
 
-    if (!prenom || !nom || !tel) {
-        showError('step3Error', 'Veuillez remplir tous les champs obligatoires.');
-        return;
+        if (!prenom || !nom || !tel) {
+            showError('step3Error', 'Veuillez remplir tous les champs obligatoires.');
+            return;
+        }
+
+        document.getElementById('recap_auteur').textContent = prenom + ' ' + nom;
+    } else {
+        document.getElementById('recap_auteur').textContent = '🕵️ Anonyme';
     }
 
     // Pré-remplir le récap
     document.getElementById('recap_type').textContent    = typeLabels[selectedType] || selectedType;
     document.getElementById('recap_service').textContent = selectedServiceName;
-    document.getElementById('recap_auteur').textContent  = prenom + ' ' + nom;
     document.getElementById('typeLabel').textContent     = selectedType;
 
     hideError('step3Error');
@@ -448,10 +502,11 @@ function soumettre() {
     // Remplir les champs cachés
     document.getElementById('f_service_id').value  = selectedServiceId;
     document.getElementById('f_type').value         = selectedType;
-    document.getElementById('f_prenom').value       = document.getElementById('inp_prenom').value.trim();
-    document.getElementById('f_nom').value          = document.getElementById('inp_nom').value.trim();
-    document.getElementById('f_telephone').value    = document.getElementById('inp_tel').value.trim();
-    document.getElementById('f_email').value        = document.getElementById('inp_email').value.trim();
+    document.getElementById('f_anonyme').value      = isAnonyme ? '1' : '0';
+    document.getElementById('f_prenom').value       = isAnonyme ? '' : document.getElementById('inp_prenom').value.trim();
+    document.getElementById('f_nom').value          = isAnonyme ? '' : document.getElementById('inp_nom').value.trim();
+    document.getElementById('f_telephone').value    = isAnonyme ? '' : document.getElementById('inp_tel').value.trim();
+    document.getElementById('f_email').value        = isAnonyme ? '' : document.getElementById('inp_email').value.trim();
     document.getElementById('f_message').value      = msg;
     document.getElementById('f_satisfaction').value = selectedStar || '';
 
