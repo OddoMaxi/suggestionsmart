@@ -15,11 +15,11 @@ class AgenceResource extends Resource
 {
     protected static ?string $model = Agence::class;
     protected static ?string $navigationIcon = 'heroicon-o-map-pin';
-    protected static ?string $navigationLabel = 'Agences / Sites';
+    protected static ?string $navigationLabel = 'Départements';
     protected static ?string $navigationGroup = 'Administration';
     protected static ?int $navigationSort = 3;
-    protected static ?string $modelLabel = 'Agence';
-    protected static ?string $pluralModelLabel = 'Agences';
+    protected static ?string $modelLabel = 'Département';
+    protected static ?string $pluralModelLabel = 'Départements';
 
     public static function form(Form $form): Form
     {
