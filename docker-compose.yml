@@ -4,6 +4,7 @@ services:
     restart: always
     ports:
       - "80:80"
+      - "443:443"
     env_file: .env
     depends_on:
       db:
@@ -11,6 +12,7 @@ services:
     volumes:
       - storage_qrcodes:/app/storage/app/public/qrcodes
       - storage_logs:/app/storage/logs
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 
   db:
     image: mysql:8.0
