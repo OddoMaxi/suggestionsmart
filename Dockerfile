@@ -49,7 +49,7 @@ RUN composer dump-autoload --optimize --no-dev
 RUN php artisan filament:assets --no-interaction 2>/dev/null || true
 
 # Dossiers + permissions
-RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions \
+RUN mkdir -p storage/logs storage/framework/cache/data storage/framework/sessions \
     storage/framework/views storage/app/public/qrcodes bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
