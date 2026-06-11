@@ -37,8 +37,8 @@ class GraphiqueEvolutionMensuelle extends ChartWidget
     protected function getData(): array
     {
         $donnees = Suggestion::select(
-            DB::raw('EXTRACT(MONTH FROM created_at)::integer as mois'),
-            DB::raw('EXTRACT(YEAR  FROM created_at)::integer as annee'),
+            DB::raw('MONTH(created_at) as mois'),
+            DB::raw('YEAR(created_at) as annee'),
             DB::raw('COUNT(*) as total'),
             DB::raw("SUM(CASE WHEN type='suggestion'   THEN 1 ELSE 0 END) as suggestions"),
             DB::raw("SUM(CASE WHEN type='critique'     THEN 1 ELSE 0 END) as critiques"),
