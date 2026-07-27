@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Models\Suggestion;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 
 class GraphiqueEvolutionMensuelle extends ChartWidget
@@ -36,20 +35,21 @@ class GraphiqueEvolutionMensuelle extends ChartWidget
 
     protected function getData(): array
     {
-        $donnees = Suggestion::select(
-            DB::raw('MONTH(created_at) as mois'),
-            DB::raw('YEAR(created_at) as annee'),
-            DB::raw('COUNT(*) as total'),
-            DB::raw("SUM(CASE WHEN type='suggestion'   THEN 1 ELSE 0 END) as suggestions"),
-            DB::raw("SUM(CASE WHEN type='critique'     THEN 1 ELSE 0 END) as critiques"),
-            DB::raw("SUM(CASE WHEN type='felicitation' THEN 1 ELSE 0 END) as felicitations"),
-        )
+        $donnees = Suggestion::query()
             ->when($this->agenceId,  fn($q) => $q->where('agence_id',  $this->agenceId))
             ->when($this->serviceId, fn($q) => $q->where('service_id', $this->serviceId))
             ->whereYear('created_at', now()->year)
-            ->groupBy('annee', 'mois')
-            ->orderBy('mois')
-            ->get();
+            ->get(['created_at', 'type'])
+            ->groupBy(fn(Suggestion $s) => $s->created_at->month)
+            ->sortKeys()
+            ->map(fn($groupe, $mois) => [
+                'mois'          => $mois,
+                'total'         => $groupe->count(),
+                'suggestions'   => $groupe->where('type', 'suggestion')->count(),
+                'critiques'     => $groupe->where('type', 'critique')->count(),
+                'felicitations' => $groupe->where('type', 'felicitation')->count(),
+            ])
+            ->values();
 
         $moisLabels = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
         $labels = $donnees->pluck('mois')->map(fn($m) => $moisLabels[$m - 1])->toArray();

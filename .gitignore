@@ -7,7 +7,9 @@
 /storage/framework/views
 /storage/framework/cache
 /storage/framework/sessions
+/storage/app/private
 /vendor
+.claude
 .env
 .env.backup
 .env.production

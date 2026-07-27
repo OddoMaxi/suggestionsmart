@@ -39,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
             ])
             ->brandName('SmartSuggest QR')
+            ->databaseNotifications()
             ->navigationGroups([
                 NavigationGroup::make('Gestion'),
                 NavigationGroup::make('Administration'),
